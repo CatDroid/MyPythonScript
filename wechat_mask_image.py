@@ -6,15 +6,23 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 # 打开输入源视频  
-INPUT_VIDEO_PATH  = '/home/hehanlong/wechat/blibli_mic3_720x1280.mp4'
-OUTPUT_VIDEO_PATH = '/home/hehanlong/wechat/blibli_mic3_720x1280_merge.mp4'
+INPUT_VIDEO_PATH  = '/Users/hehanlong/Downloads/NewFlashVideo/VID_20230927_111041.mp4'
+MASK_DIR = '/Users/hehanlong/Downloads/NewFlashVideo/VID_20230927_111041_180x320_rgba_output'
+
+
+parent_path= os.path.dirname(INPUT_VIDEO_PATH)
+base_name  = os.path.basename(INPUT_VIDEO_PATH)
+short_name = os.path.splitext(base_name)[0]
+short_name = short_name + "_merged"
+
+OUTPUT_VIDEO_PATH = os.path.join(parent_path, short_name + '.mp4')   
 input_video = cv2.VideoCapture(INPUT_VIDEO_PATH)
 
 # 获取视频帧的宽度和高度
 frame_width  = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 frame_num    = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
-print(f"video frame width:{frame_width} height:{frame_height} frame_num:{frame_num} postfix:{OUTPUT_VIDEO_PATH[-4:]}")
+print(f"video frame width:{frame_width} height:{frame_height} frame_num:{frame_num} output:{OUTPUT_VIDEO_PATH}")
 
 
 # 定义视频编解码器和输出参数  两倍宽度
@@ -30,13 +38,7 @@ while input_video.isOpened():
         print(f"end of video read")
         break
 
-    if frame_num_a >= 810 and frame_num_a <= 1810:
-        pass
-    else:
-        frame_num_a = frame_num_a + 1 
-        continue 
-
-    mask_file = f"/home/hehanlong/wechat/blibli_mic3_180x320_output/1_1_224_128_SetImage_{frame_num_a - 810}.rgba"
+    mask_file = os.path.join(MASK_DIR, f'SetImage_{frame_num_a}.rgba')
     print(f"open {mask_file}" )
     mask_image = np.fromfile(mask_file, dtype='uint8')
     mask_image = mask_image .reshape(224, 128) # (rows, cols, channels)

@@ -8,18 +8,25 @@ from PIL import Image, ImageDraw, ImageFont
 
 # 把视频缩小到指定尺寸 并旋转 
 
-INPUT_VIDEO_PATH  = '/home/hehanlong/wechat/blibli_mic3_720x1280.mp4'
-OUTPUT_VIDEO_PATH  = '/home/hehanlong/wechat/blibli_mic3_180x320.mp4'
-TARGET_PNG_DIR    = '/home/hehanlong/wechat/blibli_mic3_180x320/'
+INPUT_VIDEO_PATH  = '/Users/hehanlong/Downloads/NewFlashVideo/VID_20230927_112805.mp4'
 IS_ROTATE         = False 
 TARGET_WIDTH      = 180
 TARGET_HEIGHT     = 320
 
+# 自动生成路径 
+OUTPUT_VIDEO_PATH  = f'{INPUT_VIDEO_PATH[:-4]}_{TARGET_WIDTH}x{TARGET_HEIGHT}.mp4'
+TARGET_PNG_DIR     = f'{INPUT_VIDEO_PATH[:-4]}_{TARGET_WIDTH}x{TARGET_HEIGHT}'
+TARGET_RGBA_DIR    = TARGET_PNG_DIR[:-1] + "_rgba" if TARGET_PNG_DIR[-1]=="/" else TARGET_PNG_DIR + "_rgba"
 
+
+print(f"OUTPUT_VIDEO_PATH = {OUTPUT_VIDEO_PATH}")
+print(f"TARGET_PNG_DIR    = {TARGET_PNG_DIR}"   )
+print(f"TARGET_RGBA_DIR   = {TARGET_RGBA_DIR}"  )
 
 
 # 创建目标目录
-os.makedirs(TARGET_PNG_DIR, exist_ok=True)
+#os.makedirs(TARGET_PNG_DIR,   exist_ok=True)
+os.makedirs(TARGET_RGBA_DIR,  exist_ok=True)
 
 # 打开源视频 
 input_video = cv2.VideoCapture(INPUT_VIDEO_PATH)
@@ -43,6 +50,8 @@ while input_video.isOpened():
         print(f"end of video read")
         break
 
+    
+
     width  = TARGET_WIDTH  
     height = TARGET_HEIGHT 
     if IS_ROTATE: # 如果旋转 说明原来是横屏 
@@ -52,10 +61,11 @@ while input_video.isOpened():
     dim = (width, height)
     resized = cv2.resize(img, dim, interpolation = cv2.INTER_LINEAR)
 
-    if frame_num_a == 1: # 只打印一次
-        print(f"resized to {dim}")
+    
+    print(f"resized to {dim}")  if frame_num_a == 1  else None 
  
 
+   
     resized_bgra = cv2.cvtColor(resized, cv2.COLOR_RGB2BGRA)
     if IS_ROTATE:
         resized_bgra = cv2.rotate(resized_bgra, cv2.ROTATE_90_CLOCKWISE)
@@ -63,12 +73,11 @@ while input_video.isOpened():
             print(f"rotate to {resized.shape}  {resized.dtype}")
   
 
-    if frame_num_a >= 810 and frame_num_a <= 1810:
-        output = f"{TARGET_PNG_DIR}image_{frame_num_a - 810}.rgba"
-        print(f"output = {output}")
-        output_video.write(resized_bgra) 
-        resized_bgra.tofile(output)
-        print(f"resized_bgra {resized_bgra.shape}")
+    output = f"{TARGET_RGBA_DIR}/image_{frame_num_a}.rgba"
+    print(f"output = {output}") if frame_num_a == 1 else None 
+    output_video.write( cv2.cvtColor(resized_bgra, cv2.COLOR_BGRA2RGB) )  # opencv不支持rgba mp4
+    resized_bgra.tofile(output)
+    print(f"resized_bgra {resized_bgra.shape}") if frame_num_a == 1 else None  
         
 
     frame_num_a = frame_num_a + 1 

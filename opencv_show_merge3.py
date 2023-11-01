@@ -1,9 +1,9 @@
 import os 
 import cv2 
 
-#dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/online_model/low_seg/half_body_segmentation_model_quantized_LATEST"
-dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_mobile_v2_unet_8_hhl_2023-10-31"
-dirRight = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_mobile_v2_unet_8_hhl_reparam_2023-10-31"
+dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/online_model/low_seg/half_body_segmentation_model_quantized_LATEST"
+dirMid   = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_MobileNet_v2_U_Net_DJ_2023-10-10"
+dirRight = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_mobile_v2_unet_8_hhl_2023-10-31"
 
 video_file_list = [
     "VID_1_out.mp4",
@@ -23,7 +23,6 @@ NUMBER_VIDEOS = len(video_file_list)
 QUIT_KEY = ord('q') # 113
 LEFT_KEY  = 2
 RIGHT_KEY = 3
-SPACE_KEY = 32
 
 current_index = 0
 end_flag = False 
@@ -33,38 +32,43 @@ while (not end_flag):
     video_file = video_file_list[current_index]
 
     # 打开源视频 
-    left_video  = cv2.VideoCapture(os.path.join(dirLeft,  video_file) )
-    right_video = cv2.VideoCapture(os.path.join(dirRight, video_file) )
+    left_video   = cv2.VideoCapture(os.path.join(dirLeft,  video_file) )
+    middle_video = cv2.VideoCapture(os.path.join(dirMid,   video_file) )
+    right_video  = cv2.VideoCapture(os.path.join(dirRight, video_file) )
 
     # 获取视频帧的宽度和高度
     frame_width  = int(left_video.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(left_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_num    = int(left_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
+    frame_width_m  = int(middle_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height_m = int(middle_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frame_num_m    = int(middle_video.get(cv2.CAP_PROP_FRAME_COUNT))
+
     frame_width_r  = int(right_video.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height_r = int(right_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_num_r    = int(right_video.get(cv2.CAP_PROP_FRAME_COUNT))
     print(f"file {video_file} ")
-    print(f"left_video  frame width:{frame_width}   height:{frame_height}   frame_num:{frame_num}")
-    print(f"right_video frame width:{frame_width_r} height:{frame_height_r} frame_num:{frame_num_r}")
+    print(f"left_video    frame width:{frame_width}     height:{frame_height}     frame_num:{frame_num}")
+    print(f"middle_video  frame width:{frame_width_m}   height:{frame_height_m}   frame_num:{frame_num_m}")
+    print(f"right_video   frame width:{frame_width_r}   height:{frame_height_r}   frame_num:{frame_num_r}")
 
     while (True):
         ret,  img  = left_video.read()
+        ret1, img1 = middle_video.read()
         ret2, img2 = right_video.read() 
 
-        if not ret or not ret2 :
-            print(f"end of video read ret={ret} ret2={ret2}")
+        if not ret or not ret2 or not ret1:
+            print(f"end of video read ret={ret} ret1={ret1} ret2={ret2}")
             # 下一个视频
             current_index = current_index + 1 
             if (current_index >= NUMBER_VIDEOS):
                 current_index = 0
-            
-
             break
 
-        merged_img = cv2.hconcat([img, img2])
+        merged_img = cv2.hconcat([img, img1, img2])
 
-        cv2.imshow("merge", merged_img)
+        cv2.imshow("onlineLow_MobileNet_v2_U_Net_DJ_mobile_v2_unet_8_hhl", merged_img)
        
         ######## key process begin ########
         key = cv2.waitKey(1) & 0xFF 
@@ -97,8 +101,8 @@ while (not end_flag):
         ######## key process begin ########
 
         # end 视频
-
     left_video.release()
+    middle_video.release()
     right_video.release()
     # next 视频 
 

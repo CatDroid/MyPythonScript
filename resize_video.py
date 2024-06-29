@@ -8,7 +8,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 # 把视频缩小到指定尺寸 并旋转 
 
-INPUT_VIDEO_PATH  = '/Users/hehanlong/Downloads/NewFlashVideo/VID_20230927_112805.mp4'
+# Chuang.mp4 KeTing.mp4
+INPUT_VIDEO_PATH  = '/Volumes/MySanDisk/data/YangTai.mp4' 
 IS_ROTATE         = False 
 TARGET_WIDTH      = 180
 TARGET_HEIGHT     = 320
@@ -64,8 +65,6 @@ while input_video.isOpened():
     
     print(f"resized to {dim}")  if frame_num_a == 1  else None 
  
-
-   
     resized_bgra = cv2.cvtColor(resized, cv2.COLOR_RGB2BGRA)
     if IS_ROTATE:
         resized_bgra = cv2.rotate(resized_bgra, cv2.ROTATE_90_CLOCKWISE)
@@ -78,7 +77,6 @@ while input_video.isOpened():
     output_video.write( cv2.cvtColor(resized_bgra, cv2.COLOR_BGRA2RGB) )  # opencv不支持rgba mp4
     resized_bgra.tofile(output)
     print(f"resized_bgra {resized_bgra.shape}") if frame_num_a == 1 else None  
-        
 
     frame_num_a = frame_num_a + 1 
 

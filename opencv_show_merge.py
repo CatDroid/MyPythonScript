@@ -2,20 +2,31 @@ import os
 import cv2 
 
 #dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/online_model/low_seg/half_body_segmentation_model_quantized_LATEST"
-dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_mobile_v2_unet_8_hhl_2023-10-31"
-dirRight = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_mobile_v2_unet_8_hhl_reparam_2023-10-31"
+dirLeft  = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_unet_small_zdj_repvit_brance2_dilate_c4_2023-12-20"
+dirRight = "/Volumes/MySanDisk/mysdk/bvt_model/HumanSeg_unet_small_zdj_repvit_brance2_dilate_c4_2024-03-13"
 
 video_file_list = [
+    "long_hair_girl_1_out.mp4",
+    "long_hair_girl_2_out.mp4",
+
+    "long_hair_out.mp4",
+    "show_hand_out.mp4"
+
     "VID_1_out.mp4",
     "VID_2_out.mp4",
     "VID_3_out.mp4",
     "VID_4_out.mp4",
     "VID_5_out.mp4",
-    "back_chain_on_head_out.mp4",
     "right_side_black_chain_out.mp4",
-    "long_hair_out.mp4",
-    "show_hand_out.mp4",
-    "turn_around_out.mp4"
+    "back_chain_on_head_out.mp4",
+
+    "Chuang_out.mp4",
+    "KeTing_out.mp4",
+    "Office_Road_out.mp4",
+    "Office_Seat_Angle_out.mp4",
+    "Office_Seat_HalfBody_out.mp4",
+    "Office_Seat_Postion_out.mp4",
+    "YangTai_out.mp4"
 ]
 
 
